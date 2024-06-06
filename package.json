@@ -1,0 +1,15 @@
+{
+  "name": "2048",
+  "version": "1.0.0",
+  "description": "Yet another 2048 implementation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "2048",
+    "game"
+  ],
+  "author": "Federico Gandellini",
+  "license": "MIT"
+}
