@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Yet another 2048 implementation",
   "main": "index.js",
+  "engines": {
+    "node": "v20.11.0",
+    "npm": "v10.2.4"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
