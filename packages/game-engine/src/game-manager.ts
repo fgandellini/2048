@@ -24,8 +24,8 @@ import type { Board, Direction, Tile } from './board'
 /**
  * The state of a game
  */
-type GameState = {
-  status: 'playing' | 'won' | 'lost'
+export type GameState = {
+  state: 'playing' | 'won' | 'lost'
   board: Board
 }
 
@@ -48,7 +48,7 @@ type Action = { type: 'move'; direction: Direction }
  */
 export const startGame = (size: number): GameState => ({
   board: setRandomTile(b.createEmptyBoard(size), b.createTile(2))!,
-  status: 'playing',
+  state: 'playing',
 })
 
 /**
@@ -59,7 +59,7 @@ export const startGame = (size: number): GameState => ({
  */
 export const transition = (state: GameState, action: Action): GameState => {
   // if we're not playing, we don't need to do anything
-  if (state.status !== 'playing') {
+  if (state.state !== 'playing') {
     return state
   }
 
@@ -116,7 +116,7 @@ const setRandomTile = (board: Board, tile: Tile): Board | null => {
 const move = (state: GameState, direction: Direction): GameState => {
   // the player lost if no move is possible
   if (!b.canMove(state.board)) {
-    return { board: state.board, status: 'lost' }
+    return { board: state.board, state: 'lost' }
   }
 
   // the player can move, we need to update the board
@@ -132,7 +132,7 @@ const move = (state: GameState, direction: Direction): GameState => {
 
   // the player won if the board includes a 2048 tile
   if (b.hasTile(newBoard, { value: 2048 })) {
-    return { board: newBoard, status: 'won' }
+    return { board: newBoard, state: 'won' }
   }
 
   // the player can keep playing,
@@ -141,11 +141,11 @@ const move = (state: GameState, direction: Direction): GameState => {
 
   // this should never happen, but just in case
   if (newBoardWithRandomTile === null) {
-    return { board: newBoard, status: 'lost' }
+    return { board: newBoard, state: 'lost' }
   }
 
   return {
     board: newBoardWithRandomTile,
-    status: 'playing',
+    state: 'playing',
   }
 }

@@ -11,7 +11,7 @@ describe('Game Manager', () => {
     expect(board.length).toBe(16)
     expect(board.filter(tile => tile === 2).length).toBe(1)
     expect(board.filter(tile => tile === null).length).toBe(15)
-    expect(game.status).toBe('playing')
+    expect(game.state).toBe('playing')
   })
 
   it('Edge case, starts a game with a board of size 1', () => {
@@ -21,7 +21,7 @@ describe('Game Manager', () => {
     expect(board.length).toBe(1)
     expect(board.filter(tile => tile === 2).length).toBe(1)
     expect(board.filter(tile => tile === null).length).toBe(0)
-    expect(game.status).toBe('playing')
+    expect(game.state).toBe('playing')
   })
 
   it('After a move, places a tile of value 1 in a random position', () => {
@@ -46,7 +46,7 @@ describe('Game Manager', () => {
     expect(board.filter(tile => tile === 2).length).toBe(1) // the initial tile
     expect(board.filter(tile => tile === 1).length).toBe(1) // the new tile
     expect(board.filter(tile => tile === null).length).toBe(2) // the empty tiles
-    expect(game.status).toBe('playing')
+    expect(game.state).toBe('playing')
   })
 
   it("If the move is a no-op, doesn't a new tile", () => {
@@ -71,7 +71,7 @@ describe('Game Manager', () => {
     expect(board.filter(tile => tile === 2).length).toBe(1) // the initial tile
     expect(board.filter(tile => tile === 1).length).toBe(0) // no new tiles
     expect(board.filter(tile => tile === null).length).toBe(3) // the empty tiles
-    expect(game.status).toBe('playing')
+    expect(game.state).toBe('playing')
   })
 
   it('Detects a win', () => {
@@ -91,7 +91,7 @@ describe('Game Manager', () => {
     // move up so that the two 1024 tiles merge to a 2048 tile
     const wonGame = transition(game, { type: 'move', direction: 'up' })
 
-    expect(wonGame.status).toBe('won')
+    expect(wonGame.state).toBe('won')
     expect(wonGame.board.grid.some(tile => tile?.value === 2048)).toBe(true)
   })
 
@@ -113,7 +113,7 @@ describe('Game Manager', () => {
     // move, the direction doesn't really matter
     const lostGame = transition(game, { type: 'move', direction: 'up' })
 
-    expect(lostGame.status).toBe('lost')
+    expect(lostGame.state).toBe('lost')
     expect(isBoardEqual(lostGame.board, game.board)).toBe(true)
   })
 
