@@ -1,0 +1,19 @@
+{
+  "name": "@2048/game-engine",
+  "version": "1.0.0",
+  "description": "A Typescript implementation of the 2048 game engine",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "vitest"
+  },
+  "keywords": [
+    "2048",
+    "game",
+    "engine"
+  ],
+  "author": "Federico Gandellini",
+  "license": "MIT",
+  "devDependencies": {
+    "vitest": "^1.6.0"
+  }
+}

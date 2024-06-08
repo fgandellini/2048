@@ -15,5 +15,8 @@
     "game"
   ],
   "author": "Federico Gandellini",
-  "license": "MIT"
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ]
 }
