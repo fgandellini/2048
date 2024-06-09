@@ -22,19 +22,13 @@ The project has been tested on Linux only.
 
 1. Ensure you have `nvm` [installed](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating) on your computer.
 
-2. run `npm start`
+2. clone this repository and `cd` into it
 
-3. navigate to http://localhost:1234
+3. run `nvm install` to install the correct node version (specified in `.nvmrc`)
 
-> [!WARNING]  
-> If `npm start` fails, it's likely a problem with the automatic `nvm` detection.
->
-> Try following these steps:
->
-> 1. `cd` in the main directory of this repo
-> 2. Run `nvm use`
-> 3. Run `npm ci`
-> 4. Run `npm run dev`
+4. run `npm start` to install dependencies and start the development server
+
+5. navigate to http://localhost:1234
 
 ## 🏗️ Project Structure
 
