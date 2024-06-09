@@ -16,7 +16,7 @@ This project uses the following tools:
 - [GitHub Action](https://github.com/features/actions) to test and deploy the application
 - [GitHub Pages](https://pages.github.com/) to host the application
 
-## Getting started
+## 📑 Getting started
 
 The project has been tested on Linux only.
 
@@ -36,7 +36,7 @@ The project has been tested on Linux only.
 > 3. Run `npm ci`
 > 4. Run `npm run dev`
 
-## Project Structure
+## 🏗️ Project Structure
 
 The project is organized into two main parts:
 
@@ -61,7 +61,7 @@ The machine starts in a `playing` state.
 
 When it receives the `move` action, it checks if the game is won or lost and transitions to the appropriate state. If the game is neither won nor lost, it remains in the `playing` state and updates the board moving the tiles in the direction specified by the action and adding a new tile with a value of 1.
 
-## Gameplay
+## 🕹️ Gameplay
 
 The game starts with a Welcome screen where the user can select the game theme and difficulty.
 
@@ -83,15 +83,15 @@ If the user reaches the 2048 tile, the game is won. If there are no more moves a
 
 The game is designed with a few key principles in mind.
 
-### Immutability
+### 🪨 Immutability
 
 The game engine is designed to be immutable. This means that instead of changing the game state directly, the game engine produces a new game state based on the previous state and the action taken.
 
-### State Machines
+### 🤖 State Machines
 
 The game engine uses state machines to manage the game state. This makes it easier to reason about the game's logic and ensures that the game follows a predictable flow.
 
-### React
+### ⚛ React
 
 The concepts of state machines and immutability play very well with React. The React application uses the game state machine provided by the `@2048/game-engine` library and uses another local state machine to manage the application state.
 
@@ -109,11 +109,11 @@ The machine starts in a `welcome` state.
 
 When it receives the `game_started` action, it transitions to the `in_game` state. While the user is playing, the machine remains in the `in_game` state and updates the game state based on the user's actions. When it receives the `restarted` action, it transitions back to the `welcome` state.
 
-### Styling
+### 🎨 Styling
 
 The game is styled using plain CSS for simplicity and maximum compatibility.
 
-### Testing
+### ✔️ Testing
 
 Both the `@2048/game-engine` library and the `@2048/react` application are tested.
 
@@ -141,7 +141,7 @@ To run its tests in watch mode run:
 $ npm t --workspace @2048/react
 ```
 
-## Credits
+## 🙏 Credits
 
 Thanks to [Gabriele Cirulli](https://github.com/gabrielecirulli) for the original game idea 💡.
 
