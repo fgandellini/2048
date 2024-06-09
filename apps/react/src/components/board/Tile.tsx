@@ -30,7 +30,7 @@ const ClassicTile = ({ value }: { value: number }) => {
   const theme = getTheme('classic')
   const color = theme.tileColors.get(value)
   return (
-    <div className="tile" style={{ color, borderColor: color }}>
+    <div className="tile tile-classic" style={{ color, borderColor: color }}>
       {value}
     </div>
   )
@@ -41,7 +41,7 @@ const BlindTile = ({ value }: { value: number }) => {
   const color = theme.tileColors.get(value)
   return (
     <div
-      className="tile"
+      className="tile tile-blind"
       style={{ backgroundColor: color, borderColor: color }}
     ></div>
   )
@@ -51,13 +51,7 @@ const PlantTile = ({ value }: { value: number }) => {
   const theme = getTheme('plants')
   const color = theme.tileColors.get(value)
   return (
-    <div
-      className="tile"
-      style={{
-        borderColor: color,
-        fontSize: 'xx-large',
-      }}
-    >
+    <div className="tile tile-plants" style={{ borderColor: color }}>
       {theme.tileIcons.get(value)}
     </div>
   )

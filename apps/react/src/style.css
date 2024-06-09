@@ -55,9 +55,35 @@ h1 {
   font-size: large;
   border: 4px solid;
   background-color: #1E2124;
+
+  &.tile-plants {
+    font-size: xx-large;
+  }
 }
 
-.empty-tile {
+.obstacle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: large;
+  background-color: #1E2124;
+
+  &.obstacle-classic {
+    color: #e90505;
+    border: 4px solid #e90505;    
+  }
+
+  &.obstacle-plants {
+    font-size: xx-large;
+    border: 4px solid #716156;
+  }
+
+  &.obstacle-blind {
+    background-color: #000000;
+  }
+}
+
+.empty-cell {
   background-color: #1E2124;
 }
 
@@ -157,6 +183,23 @@ h1 {
 
   .custom-size-input {
     width: 100px;
+  }
+}
+
+.nes-container.is-dark.obstacles-selector {
+  margin-bottom: 2.5rem;
+  width: 1024px;
+  padding: 3rem;
+
+  & .title {
+    font-size: large;
+    margin-top: -3.7rem;
+    margin-bottom: 2rem;
+  }
+
+  & label {
+    display: block;
+    font-size: large;
   }
 }
 

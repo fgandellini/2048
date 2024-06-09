@@ -57,7 +57,7 @@ When it receives the `move` action, it checks if the game is won or lost and tra
 
 ## 🕹️ Gameplay
 
-The game starts with a Welcome screen where the user can select the game theme and difficulty.
+The game starts with a Welcome screen where the user can select the game theme, the board size and the number of obstacles to place on the board.
 
 ![Welcome Screen](https://github.com/fgandellini/2048/blob/main/screenshots/WelcomeScreen.png?raw=true)
 
@@ -122,7 +122,7 @@ The game engine is tested using [vitest](https://vitest.dev/).
 To run its tests in watch mode run:
 
 ```sh
-$ npm t --workspace @2048/game-engine
+$ npm run test:watch --workspace @2048/game-engine
 ```
 
 #### React Application
@@ -132,7 +132,7 @@ The React application is tested using [Jest](https://jestjs.io/) and [Testing Li
 To run its tests in watch mode run:
 
 ```sh
-$ npm t --workspace @2048/react
+$ npm run test:watch --workspace @2048/react
 ```
 
 ## 🙏 Credits

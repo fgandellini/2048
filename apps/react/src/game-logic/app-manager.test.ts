@@ -12,8 +12,9 @@ describe('app-manager (app state machine)', () => {
 
     const newState = appReducer(initialState, {
       type: 'game-started',
-      size: 2,
       theme: 'classic',
+      size: 2,
+      obstacles: 0,
     })
 
     expect(newState).toEqual({

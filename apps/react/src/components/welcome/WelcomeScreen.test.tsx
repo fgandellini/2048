@@ -22,8 +22,9 @@ describe('WelcomeScreen', () => {
 
     expect(onStart).toHaveBeenCalledWith({
       type: 'game-started',
-      size: 6, // default size
       theme: 'classic', // default theme
+      size: 6, // default size
+      obstacles: 0, // no obstacles
     })
   })
 })
