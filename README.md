@@ -27,7 +27,7 @@ The project has been tested on Linux only.
 3. navigate to http://localhost:1234
 
 > [!WARNING]  
-> If `npm start` fails, you likely have a problem with `nvm`.
+> If `npm start` fails, it's likely a problem with the automatic `nvm` detection.
 >
 > Try following these steps:
 >
