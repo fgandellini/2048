@@ -33,6 +33,15 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
+      - name: Read Node.js version from .nvmrc
+        id: nvmrc
+        uses: browniebroke/read-nvmrc-action@v1
+
+      - name: Set Node.js version
+        uses: actions/setup-node@v1
+        with:
+          node-version: '${{ steps.nvmrc.outputs.node_version }}'
+
       - name: Deploy to GitHub Pages
         uses: bitovi/github-actions-react-to-github-pages@v1.2.4
         with:
