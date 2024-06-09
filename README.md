@@ -10,7 +10,7 @@ This project uses the following tools:
 
 - [nvm](https://github.com/nvm-sh/nvm) to manage node/npm version
 - [npm workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces) to organize packages
-- [vitest](https://vitest.dev/) to run `@2024/game-engine` tests
+- [Vitest](https://vitest.dev/) to run `@2024/game-engine` tests
 - [React](https://react.dev/) to build the UI for the game `@2048/react`
 - [Jest](https://jestjs.io/) and [Testing Library](https://testing-library.com/) to test the React application
 - [GitHub Action](https://github.com/features/actions) to test and deploy the application
@@ -107,7 +107,7 @@ When it receives the `game_started` action, it transitions to the `in_game` stat
 
 The game is styled using plain CSS for simplicity and maximum compatibility.
 
-### ✔️ Testing
+### ✅ Testing
 
 Both the `@2048/game-engine` library and the `@2048/react` application are tested.
 
@@ -117,7 +117,7 @@ In development, you can run tests for the `@2048/game-engine` library and the `@
 
 #### Game Engine
 
-The game engine is tested using [vitest](https://vitest.dev/).
+The game engine is tested using [Vitest](https://vitest.dev/).
 
 To run its tests in watch mode run:
 
