@@ -11,7 +11,7 @@
     "test": "npm t --workspaces",
     "build": "npm run build --workspace @2048/react",
     "dev": "npm run dev --workspace @2048/react",
-    "start": "source $HOME/.nvm/nvm.sh; nvm use && npm ci && npm run dev"
+    "start": "unset npm_config_prefix && source $HOME/.nvm/nvm.sh && nvm use && npm ci && npm run dev"
   },
   "keywords": [
     "2048",
