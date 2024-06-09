@@ -8,7 +8,10 @@
     "npm": "v10.2.4"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm t --workspaces",
+    "build": "npm run build --workspace @2048/react",
+    "dev": "npm run dev --workspace @2048/react",
+    "start": "npm run dev"
   },
   "keywords": [
     "2048",

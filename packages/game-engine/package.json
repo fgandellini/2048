@@ -4,7 +4,8 @@
   "description": "A Typescript implementation of the 2048 game engine",
   "main": "src/index.ts",
   "scripts": {
-    "test": "vitest"
+    "test": "vitest run",
+    "test:watch": "vitest watch"
   },
   "keywords": [
     "2048",
