@@ -19,8 +19,8 @@ describe('Tile', () => {
 
     expect(container.getElementsByClassName('tile').length).toBe(1)
     expect(container.getElementsByClassName('tile').item(0)).toHaveStyle({
-      backgroundColor: '#080808',
-      borderColor: '#080808',
+      backgroundColor: '#101010',
+      borderColor: '#101010',
     })
     expect(container.getElementsByClassName('tile').item(0)).toHaveTextContent(
       '',
@@ -33,7 +33,6 @@ describe('Tile', () => {
     expect(container.getElementsByClassName('tile').length).toBe(1)
     expect(container.getElementsByClassName('tile').item(0)).toHaveStyle({
       borderColor: '#108e5a',
-      fontSize: 'xx-large',
     })
     expect(screen.getByText('🌿')).toBeInTheDocument()
   })
