@@ -1,0 +1,38 @@
+on:
+  push:
+    branches:
+      - 'main'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Read Node.js version from .nvmrc
+        id: nvmrc
+        uses: browniebroke/read-nvmrc-action@v1
+
+      - name: Set Node.js version
+        uses: actions/setup-node@v1
+        with:
+          node-version: '${{ steps.nvmrc.outputs.node_version }}'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm t
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: bitovi/github-actions-react-to-github-pages@v1.2.4
+        with:
+          path: apps/react/dist

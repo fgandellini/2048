@@ -3,10 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "parcel src/index.html",
-    "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest",
-    "build": "parcel build src/index.html",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d apps/react/dist"
+    "test": "jest",
+    "build": "parcel build src/index.html"
   },
   "keywords": [
     "2048",
@@ -26,7 +24,6 @@
     "@types/jest": "^29.5.12",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "gh-pages": "^6.1.1",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "parcel": "^2.12.0",
