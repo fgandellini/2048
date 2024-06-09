@@ -17,6 +17,7 @@
   "author": "Federico Gandellini",
   "license": "MIT",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ]
 }
