@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import {
-  createEmptyBoard,
-  move,
-  findFarthestPosition,
-  createTile,
-  setTile,
-  getTile,
-  hasTile,
   canMove,
+  createEmptyBoard,
+  createTile,
+  findFarthestPosition,
+  getCell,
+  hasTile,
   isBoardEqual,
+  move,
+  setCell,
 } from './board'
 import { boardToMatrix } from './board-debugging-utils'
 
@@ -30,9 +30,9 @@ describe('Board', () => {
     const coords = { x: 1, y: 2 }
     const tile = { value: 2 }
 
-    const newBoard = setTile(board, coords, tile)
+    const newBoard = setCell(board, coords, tile)
 
-    expect(getTile(newBoard, coords)).toBe(tile)
+    expect(getCell(newBoard, coords)).toBe(tile)
   })
 
   it('Has tile', () => {
@@ -40,23 +40,35 @@ describe('Board', () => {
     const coords = { x: 1, y: 2 }
     const tile = { value: 128 }
 
-    const newBoard = setTile(board, coords, tile)
+    const newBoard = setCell(board, coords, tile)
 
-    expect(hasTile(newBoard, { value: 128 })).toBe(true)
+    expect(hasTile(newBoard, tile)).toBe(true)
     expect(hasTile(newBoard, { value: 2 })).toBe(false)
+  })
+
+  it('Has tile takes obstacles into account', () => {
+    let board = createEmptyBoard(6)
+    const tile = { value: 128 }
+    const obstacle = { obstacle: true as const }
+
+    board = setCell(board, { x: 1, y: 2 }, tile)
+    board = setCell(board, { x: 1, y: 3 }, obstacle)
+
+    expect(hasTile(board, tile)).toBe(true)
+    expect(hasTile(board, { value: 2 })).toBe(false)
   })
 
   it('The board can move if there is at least one empty cell', () => {
     let board = createEmptyBoard(3)
-    board = setTile(board, { x: 0, y: 0 }, { value: 2 })
-    board = setTile(board, { x: 1, y: 0 }, { value: 4 })
-    board = setTile(board, { x: 2, y: 0 }, { value: 2 })
-    board = setTile(board, { x: 0, y: 1 }, null)
-    board = setTile(board, { x: 1, y: 1 }, { value: 2 })
-    board = setTile(board, { x: 2, y: 1 }, { value: 4 })
-    board = setTile(board, { x: 0, y: 2 }, { value: 2 })
-    board = setTile(board, { x: 1, y: 2 }, { value: 4 })
-    board = setTile(board, { x: 2, y: 2 }, { value: 2 })
+    board = setCell(board, { x: 0, y: 0 }, { value: 2 })
+    board = setCell(board, { x: 1, y: 0 }, { value: 4 })
+    board = setCell(board, { x: 2, y: 0 }, { value: 2 })
+    board = setCell(board, { x: 0, y: 1 }, null)
+    board = setCell(board, { x: 1, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 1 }, { value: 4 })
+    board = setCell(board, { x: 0, y: 2 }, { value: 2 })
+    board = setCell(board, { x: 1, y: 2 }, { value: 4 })
+    board = setCell(board, { x: 2, y: 2 }, { value: 2 })
 
     // prettier-ignore
     expect(boardToMatrix(board)).toEqual([
@@ -70,15 +82,15 @@ describe('Board', () => {
 
   it('The board can move if there are mergeable tiles', () => {
     let board = createEmptyBoard(3)
-    board = setTile(board, { x: 0, y: 0 }, { value: 2 })
-    board = setTile(board, { x: 1, y: 0 }, { value: 4 })
-    board = setTile(board, { x: 2, y: 0 }, { value: 4 })
-    board = setTile(board, { x: 0, y: 1 }, { value: 4 })
-    board = setTile(board, { x: 1, y: 1 }, { value: 2 })
-    board = setTile(board, { x: 2, y: 1 }, { value: 4 })
-    board = setTile(board, { x: 0, y: 2 }, { value: 2 })
-    board = setTile(board, { x: 1, y: 2 }, { value: 4 })
-    board = setTile(board, { x: 2, y: 2 }, { value: 2 })
+    board = setCell(board, { x: 0, y: 0 }, { value: 2 })
+    board = setCell(board, { x: 1, y: 0 }, { value: 4 })
+    board = setCell(board, { x: 2, y: 0 }, { value: 4 })
+    board = setCell(board, { x: 0, y: 1 }, { value: 4 })
+    board = setCell(board, { x: 1, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 1 }, { value: 4 })
+    board = setCell(board, { x: 0, y: 2 }, { value: 2 })
+    board = setCell(board, { x: 1, y: 2 }, { value: 4 })
+    board = setCell(board, { x: 2, y: 2 }, { value: 2 })
 
     // prettier-ignore
     expect(boardToMatrix(board)).toEqual([
@@ -92,21 +104,43 @@ describe('Board', () => {
 
   it('The board cannot move if full and no mergeable tiles', () => {
     let board = createEmptyBoard(3)
-    board = setTile(board, { x: 0, y: 0 }, { value: 2 })
-    board = setTile(board, { x: 1, y: 0 }, { value: 4 })
-    board = setTile(board, { x: 2, y: 0 }, { value: 2 })
-    board = setTile(board, { x: 0, y: 1 }, { value: 4 })
-    board = setTile(board, { x: 1, y: 1 }, { value: 2 })
-    board = setTile(board, { x: 2, y: 1 }, { value: 4 })
-    board = setTile(board, { x: 0, y: 2 }, { value: 2 })
-    board = setTile(board, { x: 1, y: 2 }, { value: 4 })
-    board = setTile(board, { x: 2, y: 2 }, { value: 2 })
+    board = setCell(board, { x: 0, y: 0 }, { value: 2 })
+    board = setCell(board, { x: 1, y: 0 }, { value: 4 })
+    board = setCell(board, { x: 2, y: 0 }, { value: 2 })
+    board = setCell(board, { x: 0, y: 1 }, { value: 4 })
+    board = setCell(board, { x: 1, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 1 }, { value: 4 })
+    board = setCell(board, { x: 0, y: 2 }, { value: 2 })
+    board = setCell(board, { x: 1, y: 2 }, { value: 4 })
+    board = setCell(board, { x: 2, y: 2 }, { value: 2 })
 
     // prettier-ignore
     expect(boardToMatrix(board)).toEqual([
       [2, 4, 2],
       [4, 2, 4],
       [2, 4, 2],
+    ])
+
+    expect(canMove(board)).toBe(false)
+  })
+
+  it('The board cannot move if full (obstacles included) and no mergeable tiles', () => {
+    let board = createEmptyBoard(3)
+    board = setCell(board, { x: 0, y: 0 }, { value: 2 })
+    board = setCell(board, { x: 1, y: 0 }, { value: 4 })
+    board = setCell(board, { x: 2, y: 0 }, { value: 2 })
+    board = setCell(board, { x: 0, y: 1 }, { value: 4 })
+    board = setCell(board, { x: 1, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 1 }, { obstacle: true })
+    board = setCell(board, { x: 0, y: 2 }, { value: 2 })
+    board = setCell(board, { x: 1, y: 2 }, { value: 4 })
+    board = setCell(board, { x: 2, y: 2 }, { value: 2 })
+
+    // prettier-ignore
+    expect(boardToMatrix(board)).toEqual([
+      [2, 4, 2  ],
+      [4, 2, 'X'],
+      [2, 4, 2  ],
     ])
 
     expect(canMove(board)).toBe(false)
@@ -127,9 +161,9 @@ describe('Board', () => {
       coords: { x: 4, y: 4 },
     }
 
-    board = setTile(board, t1.coords, t1.tile)
-    board = setTile(board, t2.coords, t2.tile)
-    board = setTile(board, t3.coords, t3.tile)
+    board = setCell(board, t1.coords, t1.tile)
+    board = setCell(board, t2.coords, t2.tile)
+    board = setCell(board, t3.coords, t3.tile)
 
     // prettier-ignore
     expect(boardToMatrix(board)).toEqual([
@@ -196,6 +230,30 @@ describe('Board', () => {
     })
   })
 
+  it('Finds the farthest empty tile on the right taking obstacles into account', () => {
+    let board = createEmptyBoard(4)
+    const t = {
+      tile: { value: 4 },
+      coords: { x: 0, y: 1 },
+    }
+
+    board = setCell(board, t.coords, t.tile)
+    board = setCell(board, { x: 2, y: 1 }, { obstacle: true })
+
+    // prettier-ignore
+    expect(boardToMatrix(board)).toEqual([
+      [null, null, null, null],
+      [4   , null, 'X' , null],
+      [null, null, null, null],
+      [null, null, null, null],
+    ])
+
+    expect(findFarthestPosition(board, t.coords, 'right')).toEqual({
+      farthest: { x: 1, y: 1 },
+      next: null,
+    })
+  })
+
   it('Checks if two empty boards are equal', () => {
     let board1 = createEmptyBoard(6)
     let board2 = createEmptyBoard(6)
@@ -205,28 +263,38 @@ describe('Board', () => {
 
   it('Checks if two boards are equal', () => {
     let board1 = createEmptyBoard(6)
-    board1 = setTile(board1, { x: 5, y: 0 }, { value: 2 })
+    board1 = setCell(board1, { x: 5, y: 0 }, { value: 2 })
 
     let board2 = createEmptyBoard(6)
-    board2 = setTile(board2, { x: 5, y: 0 }, { value: 2 })
+    board2 = setCell(board2, { x: 5, y: 0 }, { value: 2 })
+
+    expect(isBoardEqual(board1, board2)).toBe(true)
+  })
+
+  it('Checks if two boards are equal taking obstacles into account', () => {
+    let board1 = createEmptyBoard(6)
+    board1 = setCell(board1, { x: 5, y: 0 }, { value: 2 })
+
+    let board2 = createEmptyBoard(6)
+    board2 = setCell(board2, { x: 5, y: 0 }, { value: 2 })
 
     expect(isBoardEqual(board1, board2)).toBe(true)
   })
 
   it('Checks if two boards are different', () => {
     let board1 = createEmptyBoard(6)
-    board1 = setTile(board1, { x: 5, y: 0 }, { value: 2 })
+    board1 = setCell(board1, { x: 5, y: 0 }, { value: 2 })
 
     let board2 = createEmptyBoard(6)
-    board2 = setTile(board2, { x: 4, y: 0 }, { value: 2 })
+    board2 = setCell(board2, { x: 4, y: 0 }, { value: 2 })
 
     expect(isBoardEqual(board1, board2)).toBe(false)
   })
 
   it('Moves the board to the right', () => {
     let board = createEmptyBoard(6)
-    board = setTile(board, { x: 2, y: 1 }, { value: 2 })
-    board = setTile(board, { x: 4, y: 1 }, { value: 4 })
+    board = setCell(board, { x: 2, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 4, y: 1 }, { value: 4 })
 
     // prettier-ignore
     expect(boardToMatrix(board)).toEqual([
@@ -251,10 +319,39 @@ describe('Board', () => {
     ])
   })
 
+  it('Moves the board to the right taking obstacles into account', () => {
+    let board = createEmptyBoard(6)
+    board = setCell(board, { x: 0, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 1 }, { value: 4 })
+    board = setCell(board, { x: 4, y: 1 }, { obstacle: true })
+
+    // prettier-ignore
+    expect(boardToMatrix(board)).toEqual([
+      [null, null, null, null, null, null],
+      [2   , null, 4   , null, 'X' , null],
+      [null, null, null, null, null, null],
+      [null, null, null, null, null, null],
+      [null, null, null, null, null, null],
+      [null, null, null, null, null, null],
+    ])
+
+    board = move(board, 'right')
+
+    // prettier-ignore
+    expect(boardToMatrix(board)).toEqual([
+      [null, null, null, null, null, null],
+      [null, null, 2   , 4   , 'X' , null],
+      [null, null, null, null, null, null],
+      [null, null, null, null, null, null],
+      [null, null, null, null, null, null],
+      [null, null, null, null, null, null],
+    ])
+  })
+
   it('Moves the board to the right and merges tiles', () => {
     let board = createEmptyBoard(6)
-    board = setTile(board, { x: 2, y: 1 }, { value: 2 })
-    board = setTile(board, { x: 4, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 4, y: 1 }, { value: 2 })
 
     // prettier-ignore
     expect(boardToMatrix(board)).toEqual([
@@ -279,11 +376,40 @@ describe('Board', () => {
     ])
   })
 
+  it('Moves the board to the right and merges tiles taking obstacles into account', () => {
+    let board = createEmptyBoard(6)
+    board = setCell(board, { x: 0, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 4, y: 1 }, { obstacle: true })
+
+    // prettier-ignore
+    expect(boardToMatrix(board)).toEqual([
+      [null, null, null, null, null, null],
+      [2   , null, 2   , null, 'X' , null],
+      [null, null, null, null, null, null],
+      [null, null, null, null, null, null],
+      [null, null, null, null, null, null],
+      [null, null, null, null, null, null],
+    ])
+
+    board = move(board, 'right')
+
+    // prettier-ignore
+    expect(boardToMatrix(board)).toEqual([
+      [null, null, null, null, null, null],
+      [null, null, null, 4   , 'X' , null],
+      [null, null, null, null, null, null],
+      [null, null, null, null, null, null],
+      [null, null, null, null, null, null],
+      [null, null, null, null, null, null],
+    ])
+  })
+
   it('Moves the board to the right and only merges the farthest tiles', () => {
     let board = createEmptyBoard(6)
-    board = setTile(board, { x: 0, y: 1 }, { value: 2 })
-    board = setTile(board, { x: 2, y: 1 }, { value: 2 })
-    board = setTile(board, { x: 4, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 0, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 4, y: 1 }, { value: 2 })
 
     // prettier-ignore
     expect(boardToMatrix(board)).toEqual([
@@ -310,8 +436,8 @@ describe('Board', () => {
 
   it('Moves the board to the left', () => {
     let board = createEmptyBoard(6)
-    board = setTile(board, { x: 2, y: 1 }, { value: 2 })
-    board = setTile(board, { x: 4, y: 1 }, { value: 4 })
+    board = setCell(board, { x: 2, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 4, y: 1 }, { value: 4 })
 
     // prettier-ignore
     expect(boardToMatrix(board)).toEqual([
@@ -338,8 +464,8 @@ describe('Board', () => {
 
   it('Moves the board to the left and merges tiles', () => {
     let board = createEmptyBoard(6)
-    board = setTile(board, { x: 2, y: 1 }, { value: 2 })
-    board = setTile(board, { x: 4, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 4, y: 1 }, { value: 2 })
 
     // prettier-ignore
     expect(boardToMatrix(board)).toEqual([
@@ -366,9 +492,9 @@ describe('Board', () => {
 
   it('Moves the board to the left and only merges the farthest tiles', () => {
     let board = createEmptyBoard(6)
-    board = setTile(board, { x: 0, y: 1 }, { value: 2 })
-    board = setTile(board, { x: 2, y: 1 }, { value: 2 })
-    board = setTile(board, { x: 4, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 0, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 4, y: 1 }, { value: 2 })
 
     // prettier-ignore
     expect(boardToMatrix(board)).toEqual([
@@ -395,8 +521,8 @@ describe('Board', () => {
 
   it('Moves the board up', () => {
     let board = createEmptyBoard(6)
-    board = setTile(board, { x: 2, y: 1 }, { value: 2 })
-    board = setTile(board, { x: 2, y: 4 }, { value: 4 })
+    board = setCell(board, { x: 2, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 4 }, { value: 4 })
 
     // prettier-ignore
     expect(boardToMatrix(board)).toEqual([
@@ -423,8 +549,8 @@ describe('Board', () => {
 
   it('Moves the board up and merges tiles', () => {
     let board = createEmptyBoard(6)
-    board = setTile(board, { x: 2, y: 1 }, { value: 2 })
-    board = setTile(board, { x: 2, y: 4 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 4 }, { value: 2 })
 
     // prettier-ignore
     expect(boardToMatrix(board)).toEqual([
@@ -451,9 +577,9 @@ describe('Board', () => {
 
   it('Moves the board up and only merges the farthest tiles', () => {
     let board = createEmptyBoard(6)
-    board = setTile(board, { x: 2, y: 1 }, { value: 2 })
-    board = setTile(board, { x: 2, y: 3 }, { value: 2 })
-    board = setTile(board, { x: 2, y: 5 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 3 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 5 }, { value: 2 })
 
     // prettier-ignore
     expect(boardToMatrix(board)).toEqual([
@@ -480,8 +606,8 @@ describe('Board', () => {
 
   it('Moves the board down', () => {
     let board = createEmptyBoard(6)
-    board = setTile(board, { x: 2, y: 1 }, { value: 2 })
-    board = setTile(board, { x: 2, y: 4 }, { value: 4 })
+    board = setCell(board, { x: 2, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 4 }, { value: 4 })
 
     // prettier-ignore
     expect(boardToMatrix(board)).toEqual([
@@ -508,8 +634,8 @@ describe('Board', () => {
 
   it('Moves the board down and merges tiles', () => {
     let board = createEmptyBoard(6)
-    board = setTile(board, { x: 2, y: 1 }, { value: 2 })
-    board = setTile(board, { x: 2, y: 4 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 4 }, { value: 2 })
 
     // prettier-ignore
     expect(boardToMatrix(board)).toEqual([
@@ -536,9 +662,9 @@ describe('Board', () => {
 
   it('Moves the board down and only merges the farthest tiles', () => {
     let board = createEmptyBoard(6)
-    board = setTile(board, { x: 2, y: 1 }, { value: 2 })
-    board = setTile(board, { x: 2, y: 3 }, { value: 2 })
-    board = setTile(board, { x: 2, y: 5 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 3 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 5 }, { value: 2 })
 
     // prettier-ignore
     expect(boardToMatrix(board)).toEqual([
@@ -565,12 +691,12 @@ describe('Board', () => {
 
   it('Real world scenario with multiple moves', () => {
     let board = createEmptyBoard(6)
-    board = setTile(board, { x: 4, y: 0 }, { value: 4 })
-    board = setTile(board, { x: 2, y: 1 }, { value: 2 })
-    board = setTile(board, { x: 2, y: 3 }, { value: 2 })
-    board = setTile(board, { x: 4, y: 3 }, { value: 2 })
-    board = setTile(board, { x: 0, y: 4 }, { value: 2 })
-    board = setTile(board, { x: 2, y: 5 }, { value: 2 })
+    board = setCell(board, { x: 4, y: 0 }, { value: 4 })
+    board = setCell(board, { x: 2, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 3 }, { value: 2 })
+    board = setCell(board, { x: 4, y: 3 }, { value: 2 })
+    board = setCell(board, { x: 0, y: 4 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 5 }, { value: 2 })
 
     // prettier-ignore
     expect(boardToMatrix(board)).toEqual([

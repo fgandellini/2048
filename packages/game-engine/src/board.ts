@@ -109,8 +109,8 @@ export const move = (board: Board, direction: Direction): Board =>
     // moves the tiles in the given direction
     .reduce((newBoard, currentCoords) => {
       // takes the tile from the current position
-      const tile = getTile(newBoard, currentCoords)
-      if (tile === null) {
+      const tile = getCell(newBoard, currentCoords)
+      if (!isTile(tile)) {
         return newBoard
       }
 
@@ -124,7 +124,7 @@ export const move = (board: Board, direction: Direction): Board =>
 
       // in case we have a "next" tile, we merge the current tile with it
       // otherwise we move the current tile to the farthest position
-      return next !== null && next.tile.value === tile.value
+      return next !== null && isTileEqual(next.tile, tile)
         ? mergeTileTo(newBoard, currentCoords, farthest, next)
         : moveTileTo(newBoard, currentCoords, farthest)
     }, board)
@@ -148,7 +148,7 @@ export const isBoardEqual = (board1: Board, board2: Board): boolean => {
   const grid2 = board2.grid
 
   for (let i = 0; i < grid1.length; i++) {
-    if (!isTileEqual(grid1[i]!, grid2[i]!)) {
+    if (!isCellEqual(grid1[i]!, grid2[i]!)) {
       return false
     }
   }
@@ -157,13 +157,13 @@ export const isBoardEqual = (board1: Board, board2: Board): boolean => {
 }
 
 /**
- * Checks if the board includes a tile with a given tile or empty cells
+ * Checks if the board includes a tile with a given tile
  * @param board the board to check
- * @param tile the tile to look for or null, if we want to check for empty tiles
- * @returns true if the board includes a tile with the given value (or empty tiles), false otherwise
+ * @param tile the tile to look for
+ * @returns true if the board includes a tile with the given value, false otherwise
  */
-export const hasTile = (board: Board, tile: Tile | null): boolean =>
-  board.grid.some(t => isTileEqual(t, tile))
+export const hasTile = (board: Board, tile: Tile): boolean =>
+  board.grid.some(t => isTile(t) && isTileEqual(t, tile))
 
 /**
  * Checks if the board can move in any direction
@@ -172,7 +172,7 @@ export const hasTile = (board: Board, tile: Tile | null): boolean =>
  */
 export const canMove = (board: Board): boolean => {
   // if there are empty cells, we can move
-  if (hasTile(board, null)) {
+  if (hasEmpty(board)) {
     return true
   }
 
@@ -180,7 +180,7 @@ export const canMove = (board: Board): boolean => {
   const directions: Array<Direction> = ['up', 'down', 'left', 'right']
   return directions.some(direction => {
     const newBoard = move(board, direction)
-    return hasTile(newBoard, null)
+    return hasEmpty(newBoard)
   })
 }
 
@@ -207,19 +207,81 @@ export const findFarthestPosition = (
   do {
     previous = next
     next = step(previous, direction)
-  } while (isCellInsideBoard(next, board.size) && getTile(board, next) === null)
+  } while (isCellInsideBoard(next, board.size) && isEmpty(getCell(board, next)))
 
   return {
     farthest: previous,
     // handy for the merging logic
     next:
-      isCellInsideBoard(next, board.size) && getTile(board, next) !== null
+      isCellInsideBoard(next, board.size) && isTile(getCell(board, next))
         ? {
-            tile: getTile(board, next)!,
+            tile: getCell(board, next) as Tile,
             coords: next,
           }
         : null,
   }
+}
+
+/**
+ * Type guard to check if a cell is a Tile
+ * @param cell the cell to check
+ * @returns true if the cell is a Tile, false otherwise
+ */
+export const isTile = (cell: Tile | Obstacle | null): cell is Tile =>
+  cell !== null && 'value' in cell
+
+/**
+ * Type guard to check if a cell is empty
+ */
+export const isEmpty = (cell: Tile | Obstacle | null): cell is null =>
+  cell === null
+
+/**
+ * Type guard to check if a cell is an Obstacle
+ * @param cell the cell to check
+ * @returns true if the cell is an Obstacle, false otherwise
+ */
+const isObstacle = (cell: Tile | Obstacle | null): cell is Obstacle =>
+  cell !== null && 'obstacle' in cell && cell.obstacle === true
+
+/**
+ * Checks if the board has empty cells
+ * @param board the board to check
+ * @returns true if the board has emptycells, false otherwise
+ */
+const hasEmpty = (board: Board): boolean => board.grid.some(isEmpty)
+
+/**
+ * Checks if two cells are equal
+ * @param cell1 the first cell to compare
+ * @param cell2 the second cell to compare
+ * @returns true if the cells are equal, false otherwise
+ */
+const isCellEqual = (
+  cell1: Tile | Obstacle | null,
+  cell2: Tile | Obstacle | null,
+): boolean => {
+  if (isEmpty(cell1)) {
+    return isEmpty(cell2)
+  }
+
+  if (isEmpty(cell2)) {
+    return false
+  }
+
+  if (isObstacle(cell1)) {
+    return isObstacle(cell2)
+  }
+
+  if (isObstacle(cell2)) {
+    return false
+  }
+
+  if (isTile(cell1) && isTile(cell2)) {
+    return isTileEqual(cell1, cell2)
+  }
+
+  return false
 }
 
 /**
@@ -309,11 +371,6 @@ const isCellInsideBoard = (cell: Coords, size: number): boolean =>
   cell.x >= 0 && cell.y >= 0 && cell.x < size && cell.y < size
 
 /**
- * Tiles
- * --------------------------------------------------
- */
-
-/**
  * Creates a tile with a given value
  * @param value the value for the tile
  * @returns the tile
@@ -321,58 +378,10 @@ const isCellInsideBoard = (cell: Coords, size: number): boolean =>
 export const createTile = (value: number): Tile => ({ value })
 
 /**
- * Gets a tile from a given position
- * @param board the board to lookup the tile from
- * @param position the position (either index or coordinates)
- * @returns the tile at the given position
- * @throws if the position is out of bound
+ * Creates an obstacle
+ * @returns the obstacle
  */
-export const getTile = (
-  board: Board,
-  position: number | Coords,
-): Tile | null => {
-  const index =
-    typeof position === 'number'
-      ? position
-      : coordsToIndex(board.size, position)
-
-  if (index < 0 || index >= board.grid.length) {
-    throw new Error(`Out of bound (board=${board.grid} index=${index})`)
-  }
-
-  return board.grid[index]!
-}
-
-/**
- * Sets a tile at a given position
- * @param board the board to set the tile to
- * @param position the position (either index or coordinates)
- * @param tile the tile to set
- * @returns the new board
- * @throws if the position is out of bound
- */
-export const setTile = (
-  board: Board,
-  position: number | Coords,
-  tile: Tile | null,
-): Board => {
-  const index =
-    typeof position === 'number'
-      ? position
-      : coordsToIndex(board.size, position)
-
-  if (index < 0 || index >= board.grid.length) {
-    throw new Error(`Out of bound (board=${board.grid} index=${index})`)
-  }
-
-  const grid = [
-    ...board.grid.slice(0, index),
-    tile,
-    ...board.grid.slice(index + 1),
-  ]
-
-  return { size: board.size, grid }
-}
+export const createObstacle = (): Obstacle => ({ obstacle: true })
 
 /**
  * Moves a tile from a given position to another
@@ -383,13 +392,13 @@ export const setTile = (
  * @throws if any position is out of bound (because it uses getTile and setTile)
  */
 const moveTileTo = (board: Board, from: Coords, to: Coords): Board => {
-  const tile = getTile(board, from)
-  if (tile === null) {
+  const tile = getCell(board, from)
+  if (!isTile(tile)) {
     return board
   }
 
-  const newBoard = setTile(board, from, null)
-  return setTile(newBoard, to, tile)
+  const newBoard = setCell(board, from, null)
+  return setCell(newBoard, to, tile)
 }
 
 /**
@@ -410,7 +419,66 @@ const mergeTileTo = (
     coords: Coords
   },
 ): Board => {
-  let newBoard = setTile(board, from, null)
-  newBoard = setTile(newBoard, farthest, null)
-  return setTile(newBoard, to.coords, createTile(to.tile.value * 2))
+  let newBoard = setCell(board, from, null)
+  newBoard = setCell(newBoard, farthest, null)
+  return setCell(newBoard, to.coords, createTile(to.tile.value * 2))
+}
+
+/**
+ * Cells
+ * --------------------------------------------------
+ */
+
+/**
+ * Gets a cell from a given position
+ * @param board the board to lookup the cell from
+ * @param position the position (either index or coordinates)
+ * @returns the cell at the given position
+ * @throws if the position is out of bound
+ */
+export const getCell = (
+  board: Board,
+  position: number | Coords,
+): Tile | Obstacle | null => {
+  const index =
+    typeof position === 'number'
+      ? position
+      : coordsToIndex(board.size, position)
+
+  if (index < 0 || index >= board.grid.length) {
+    throw new Error(`Out of bound (board=${board.grid} index=${index})`)
+  }
+
+  return board.grid[index]!
+}
+
+/**
+ * Sets a cell at a given position
+ * @param board the board to set the cell to
+ * @param position the position (either index or coordinates)
+ * @param cell the cell to set
+ * @returns the new board
+ * @throws if the position is out of bound
+ */
+export const setCell = (
+  board: Board,
+  position: number | Coords,
+  cell: Tile | Obstacle | null,
+): Board => {
+  const index =
+    typeof position === 'number'
+      ? position
+      : coordsToIndex(board.size, position)
+
+  if (index < 0 || index >= board.grid.length) {
+    throw new Error(`Out of bound (board=${board.grid} index=${index})`)
+  }
+
+  const grid = [
+    ...board.grid.slice(0, index),
+    cell,
+    ...board.grid.slice(index + 1),
+  ]
+
+  return { size: board.size, grid }
 }
