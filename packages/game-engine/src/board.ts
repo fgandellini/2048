@@ -241,7 +241,7 @@ export const isEmpty = (cell: Tile | Obstacle | null): cell is null =>
  * @param cell the cell to check
  * @returns true if the cell is an Obstacle, false otherwise
  */
-const isObstacle = (cell: Tile | Obstacle | null): cell is Obstacle =>
+export const isObstacle = (cell: Tile | Obstacle | null): cell is Obstacle =>
   cell !== null && 'obstacle' in cell && cell.obstacle === true
 
 /**
