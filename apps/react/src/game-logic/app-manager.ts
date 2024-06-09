@@ -34,8 +34,9 @@ type AppState =
 
 export type GameStartedAction = {
   type: 'game-started'
-  size: number
   theme: Theme
+  size: number
+  obstacles: number
 }
 
 export type RestartedAction = {
@@ -71,7 +72,7 @@ export const appReducer = (current: AppState, action: AppActions): AppState => {
           return {
             state: 'in-game',
             theme: action.theme,
-            game: startGame(action.size),
+            game: startGame(action.size, action.obstacles),
           }
         default:
           return current

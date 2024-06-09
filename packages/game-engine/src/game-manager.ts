@@ -1,5 +1,5 @@
+import type { Board, Direction, Obstacle, Tile } from './board'
 import * as b from './board'
-import type { Board, Direction, Tile } from './board'
 
 /**
  * The Game Manager
@@ -43,13 +43,19 @@ type Action = { type: 'move'; direction: Direction }
 /**
  * Starts a new game
  * @param size the size of the board
+ * @param obstacles the number of obstacles to place on the board
  * @returns the initial game state
  * @note the game starts with a tile of value 2 placed randomly on the board
  */
-export const startGame = (size: number, obstacles: number): GameState => ({
-  board: setRandomTile(b.createEmptyBoard(size), b.createTile(2))!,
-  state: 'playing',
-})
+export const startGame = (size: number, obstacles: number = 0): GameState => {
+  let board = setRandomCell(b.createEmptyBoard(size), b.createTile(2))!
+
+  for (let i = 0; i < obstacles; i++) {
+    board = setRandomCell(board, b.createObstacle())!
+  }
+
+  return { state: 'playing', board }
+}
 
 /**
  * Transitions the game state given a player action
@@ -72,35 +78,35 @@ export const transition = (state: GameState, action: Action): GameState => {
 }
 
 /**
- * Gets the indexes of the empty tiles on the board
- * @param board the board to get the empty tiles from
- * @returns an array of indexes of the empty tiles
+ * Gets the indexes of the empty cells on the board
+ * @param board the board to get the empty cells from
+ * @returns an array of indexes of the empty cells
  */
-const getEmptyTileIndexes = (board: Board) =>
+const getEmptyCellIndexes = (board: Board) =>
   board.grid.reduce<number[]>(
-    (indexes, tile, index) => (tile === null ? [...indexes, index] : indexes),
+    (indexes, cell, index) => (b.isEmpty(cell) ? [...indexes, index] : indexes),
     [],
   )
 
 /**
- * Sets a random tile on the board
- * @param board the board to set the tile on
- * @param tile the tile to set
- * @returns the board with the tile set in a random empty cell or null if there are no empty cells
+ * Sets a random cell on the board
+ * @param board the board to set the cell on
+ * @param cell the cell to set
+ * @returns the board with the cell set in a random empty cell or null if there are no empty cells
  */
-const setRandomTile = (board: Board, tile: Tile): Board | null => {
-  const emptyTileIndexes = getEmptyTileIndexes(board)
-  if (emptyTileIndexes.length === 0) {
+const setRandomCell = (board: Board, cell: Tile | Obstacle): Board | null => {
+  const emptyCellIndexes = getEmptyCellIndexes(board)
+  if (emptyCellIndexes.length === 0) {
     return null
   }
 
-  const selectedIndex = Math.floor(Math.random() * emptyTileIndexes.length)
-  const insertIndex = emptyTileIndexes[selectedIndex]
+  const selectedIndex = Math.floor(Math.random() * emptyCellIndexes.length)
+  const insertIndex = emptyCellIndexes[selectedIndex]
   if (insertIndex === undefined) {
     return null
   }
 
-  return b.setTile(board, insertIndex, tile)
+  return b.setCell(board, insertIndex, cell)
 }
 
 /**
@@ -137,7 +143,7 @@ const move = (state: GameState, direction: Direction): GameState => {
 
   // the player can keep playing,
   // we need to add a new tile to the board
-  const newBoardWithRandomTile = setRandomTile(newBoard, b.createTile(1))
+  const newBoardWithRandomTile = setRandomCell(newBoard, b.createTile(1))
 
   // this should never happen, but just in case
   if (newBoardWithRandomTile === null) {

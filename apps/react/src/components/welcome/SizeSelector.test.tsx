@@ -9,7 +9,7 @@ describe('SizeSelector', () => {
     )
 
     expect(container.getElementsByClassName('size-selector').length).toBe(1)
-    expect(screen.getByText('SELECT DIFFICULY')).toBeInTheDocument()
+    expect(screen.getByText('SELECT BOARD SIZE')).toBeInTheDocument()
     expect(screen.getByText('Easy (8x8)')).toBeInTheDocument()
     expect(screen.getByText('Normal (6x6)')).toBeInTheDocument()
     expect(screen.getByText('Hard (4x4)')).toBeInTheDocument()

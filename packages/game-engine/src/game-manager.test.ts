@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
+import { isBoardEqual, isTile, setCell } from './board'
 import { boardToArray, boardToMatrix } from './board-debugging-utils'
 import { startGame, transition } from './game-manager'
-import { isBoardEqual, setTile } from './board'
 
 describe('Game Manager', () => {
   it('Starts a game', () => {
@@ -29,10 +29,10 @@ describe('Game Manager', () => {
 
     // tweak the game state to ensure
     // that the move doesn't result in a no-op
-    game.board = setTile(game.board, { x: 0, y: 0 }, null)
-    game.board = setTile(game.board, { x: 1, y: 0 }, { value: 2 })
-    game.board = setTile(game.board, { x: 0, y: 1 }, null)
-    game.board = setTile(game.board, { x: 1, y: 1 }, null)
+    game.board = setCell(game.board, { x: 0, y: 0 }, null)
+    game.board = setCell(game.board, { x: 1, y: 0 }, { value: 2 })
+    game.board = setCell(game.board, { x: 0, y: 1 }, null)
+    game.board = setCell(game.board, { x: 1, y: 1 }, null)
 
     // prettier-ignore
     expect(boardToMatrix(game.board)).toEqual([
@@ -54,10 +54,10 @@ describe('Game Manager', () => {
 
     // tweak the game state to ensure
     // that the move results in a no-op
-    game.board = setTile(game.board, { x: 0, y: 0 }, null)
-    game.board = setTile(game.board, { x: 1, y: 0 }, { value: 2 })
-    game.board = setTile(game.board, { x: 0, y: 1 }, null)
-    game.board = setTile(game.board, { x: 1, y: 1 }, null)
+    game.board = setCell(game.board, { x: 0, y: 0 }, null)
+    game.board = setCell(game.board, { x: 1, y: 0 }, { value: 2 })
+    game.board = setCell(game.board, { x: 0, y: 1 }, null)
+    game.board = setCell(game.board, { x: 1, y: 1 }, null)
 
     // prettier-ignore
     expect(boardToMatrix(game.board)).toEqual([
@@ -78,10 +78,10 @@ describe('Game Manager', () => {
     const game = startGame(2)
 
     // tweak the game state to generate a win
-    game.board = setTile(game.board, { x: 0, y: 0 }, { value: 1024 })
-    game.board = setTile(game.board, { x: 1, y: 0 }, null)
-    game.board = setTile(game.board, { x: 0, y: 1 }, { value: 1024 })
-    game.board = setTile(game.board, { x: 1, y: 1 }, null)
+    game.board = setCell(game.board, { x: 0, y: 0 }, { value: 1024 })
+    game.board = setCell(game.board, { x: 1, y: 0 }, null)
+    game.board = setCell(game.board, { x: 0, y: 1 }, { value: 1024 })
+    game.board = setCell(game.board, { x: 1, y: 1 }, null)
 
     expect(boardToMatrix(game.board)).toEqual([
       [1024, null],
@@ -92,17 +92,19 @@ describe('Game Manager', () => {
     const wonGame = transition(game, { type: 'move', direction: 'up' })
 
     expect(wonGame.state).toBe('won')
-    expect(wonGame.board.grid.some(tile => tile?.value === 2048)).toBe(true)
+    expect(
+      wonGame.board.grid.some(tile => isTile(tile) && tile.value === 2048),
+    ).toBe(true)
   })
 
   it('Detects a lose', () => {
     const game = startGame(2)
 
     // tweak the game state to generate a no move board
-    game.board = setTile(game.board, { x: 0, y: 0 }, { value: 1 })
-    game.board = setTile(game.board, { x: 1, y: 0 }, { value: 2 })
-    game.board = setTile(game.board, { x: 0, y: 1 }, { value: 2 })
-    game.board = setTile(game.board, { x: 1, y: 1 }, { value: 1 })
+    game.board = setCell(game.board, { x: 0, y: 0 }, { value: 1 })
+    game.board = setCell(game.board, { x: 1, y: 0 }, { value: 2 })
+    game.board = setCell(game.board, { x: 0, y: 1 }, { value: 2 })
+    game.board = setCell(game.board, { x: 1, y: 1 }, { value: 1 })
 
     // prettier-ignore
     expect(boardToMatrix(game.board)).toEqual([

@@ -10,6 +10,6 @@ describe('Board', () => {
     expect(container.getElementsByClassName('board').length).toBe(1)
     expect(container.getElementsByClassName('board-classic').length).toBe(1)
     expect(container.getElementsByClassName('tile').length).toBe(1)
-    expect(container.getElementsByClassName('empty-tile').length).toBe(3)
+    expect(container.getElementsByClassName('empty-cell').length).toBe(3)
   })
 })

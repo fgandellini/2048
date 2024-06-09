@@ -19,7 +19,7 @@ export const SizeSelector = ({ size, onSelectSize }: SizeSelectorProps) => {
 
   return (
     <div className="nes-container with-title is-dark size-selector">
-      <h3 className="title">SELECT DIFFICULY</h3>
+      <h3 className="title">SELECT BOARD SIZE</h3>
       <label htmlFor="size-8">
         <input
           type="radio"
