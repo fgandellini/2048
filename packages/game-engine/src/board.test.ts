@@ -58,7 +58,7 @@ describe('Board', () => {
     expect(hasTile(board, { value: 2 })).toBe(false)
   })
 
-  it('The board can move if there is at least one empty cell', () => {
+  it('The board can move if there is at least one reachable empty cell', () => {
     let board = createEmptyBoard(3)
     board = setCell(board, { x: 0, y: 0 }, { value: 2 })
     board = setCell(board, { x: 1, y: 0 }, { value: 4 })
@@ -141,6 +141,28 @@ describe('Board', () => {
       [2, 4, 2  ],
       [4, 2, 'X'],
       [2, 4, 2  ],
+    ])
+
+    expect(canMove(board)).toBe(false)
+  })
+
+  it('The board cannot move if there are unreachable cells', () => {
+    let board = createEmptyBoard(3)
+    board = setCell(board, { x: 0, y: 0 }, { obstacle: true })
+    board = setCell(board, { x: 1, y: 0 }, { value: 2 })
+    board = setCell(board, { x: 2, y: 0 }, { value: 1 })
+    board = setCell(board, { x: 0, y: 1 }, { obstacle: true })
+    board = setCell(board, { x: 1, y: 1 }, { obstacle: true })
+    board = setCell(board, { x: 2, y: 1 }, { value: 2 })
+    board = setCell(board, { x: 0, y: 2 }, null)
+    board = setCell(board, { x: 1, y: 2 }, { obstacle: true })
+    board = setCell(board, { x: 2, y: 2 }, { value: 1 })
+
+    // prettier-ignore
+    expect(boardToMatrix(board)).toEqual([
+      ['X' , 2   , 1],
+      ['X' , 'X' , 2],
+      [null, 'X' , 1],
     ])
 
     expect(canMove(board)).toBe(false)

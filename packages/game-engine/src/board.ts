@@ -170,19 +170,13 @@ export const hasTile = (board: Board, tile: Tile): boolean =>
  * @param board the board to check
  * @returns true if the board can move in any direction, false otherwise
  */
-export const canMove = (board: Board): boolean => {
-  // if there are empty cells, we can move
-  if (hasEmpty(board)) {
-    return true
-  }
-
-  // if there are adjacent cells with the same value, we can move
-  const directions: Array<Direction> = ['up', 'down', 'left', 'right']
-  return directions.some(direction => {
+export const canMove = (board: Board): boolean =>
+  (['up', 'down', 'left', 'right'] as const).some(direction => {
+    // try to move the board
     const newBoard = move(board, direction)
-    return hasEmpty(newBoard)
+    // if the board changed, we can move
+    return !isBoardEqual(board, newBoard)
   })
-}
 
 /**
  * Finds the farthest position in a given direction
@@ -243,13 +237,6 @@ export const isEmpty = (cell: Tile | Obstacle | null): cell is null =>
  */
 export const isObstacle = (cell: Tile | Obstacle | null): cell is Obstacle =>
   cell !== null && 'obstacle' in cell && cell.obstacle === true
-
-/**
- * Checks if the board has empty cells
- * @param board the board to check
- * @returns true if the board has emptycells, false otherwise
- */
-const hasEmpty = (board: Board): boolean => board.grid.some(isEmpty)
 
 /**
  * Checks if two cells are equal
