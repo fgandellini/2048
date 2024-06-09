@@ -30,6 +30,7 @@ jobs:
       - name: Run tests
         run: npm t
   deploy:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
