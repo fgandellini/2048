@@ -65,13 +65,13 @@ When it receives the `move` action, it checks if the game is won or lost and tra
 
 The game starts with a Welcome screen where the user can select the game theme and difficulty.
 
-![Welcome Screen](https://github.com/fgandellini/2048/blob/main/screenhots/WelcomeScreen.png?raw=true)
+![Welcome Screen](https://github.com/fgandellini/2048/blob/main/screenshots/WelcomeScreen.png?raw=true)
 
 Once the user hits the `Start Game!` button, the game starts and loads the Board screen.
 
 Here the user can play using the arrow keys on the keyboard.
 
-![Board Screen](https://github.com/fgandellini/2048/blob/main/screenhots/BoardScreen.png?raw=true)
+![Board Screen](https://github.com/fgandellini/2048/blob/main/screenshots/BoardScreen.png?raw=true)
 
 The goal of the game is to reach the 2048 tile by combining tiles with the same value. The user can move the tiles in four directions: up, down, left, and right. When the user moves the tiles, the game engine updates the board by moving the tiles in the specified direction and adding a new tile with a value of 1.
 
