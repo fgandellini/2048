@@ -57,6 +57,11 @@ export type Coords = { x: number; y: number }
 export type Tile = { value: number }
 
 /**
+ * An obstacle is a cell in the board that won't move
+ */
+export type Obstacle = { obstacle: true }
+
+/**
  * A Board is a grid of tiles
  *
  * The `size` parametere is guaranteed to be coherend
@@ -64,7 +69,7 @@ export type Tile = { value: number }
  */
 export type Board = {
   size: number
-  grid: ReadonlyArray<Tile | null>
+  grid: ReadonlyArray<Tile | Obstacle | null>
 }
 
 /**

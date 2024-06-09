@@ -46,7 +46,7 @@ type Action = { type: 'move'; direction: Direction }
  * @returns the initial game state
  * @note the game starts with a tile of value 2 placed randomly on the board
  */
-export const startGame = (size: number): GameState => ({
+export const startGame = (size: number, obstacles: number): GameState => ({
   board: setRandomTile(b.createEmptyBoard(size), b.createTile(2))!,
   state: 'playing',
 })

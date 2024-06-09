@@ -116,34 +116,4 @@ describe('Game Manager', () => {
     expect(lostGame.state).toBe('lost')
     expect(isBoardEqual(lostGame.board, game.board)).toBe(true)
   })
-
-  // it('Play a game', () => {
-  //   console.log('init --------------------------------------------')
-  //   let state = startGame(2)
-  //   console.table(boardToMatrix(state.board))
-
-  //   console.log('up --------------------------------------------')
-  //   state = transition(state, { type: 'move', direction: 'up' })
-  //   console.table(boardToMatrix(state.board))
-
-  //   console.log('right --------------------------------------------')
-  //   state = transition(state, { type: 'move', direction: 'right' })
-  //   console.table(boardToMatrix(state.board))
-
-  //   console.log('up --------------------------------------------')
-  //   state = transition(state, { type: 'move', direction: 'up' })
-  //   console.table(boardToMatrix(state.board))
-
-  //   console.log('right --------------------------------------------')
-  //   state = transition(state, { type: 'move', direction: 'right' })
-  //   console.table(boardToMatrix(state.board))
-
-  //   console.log('right --------------------------------------------')
-  //   state = transition(state, { type: 'move', direction: 'right' })
-  //   console.table(boardToMatrix(state.board))
-
-  //   console.log('up --------------------------------------------')
-  //   state = transition(state, { type: 'move', direction: 'up' })
-  //   console.table(boardToMatrix(state.board))
-  // })
 })

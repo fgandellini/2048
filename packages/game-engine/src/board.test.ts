@@ -632,26 +632,4 @@ describe('Board', () => {
       [null, null, null, null, null, null],
     ])
   })
-
-  // it('Debug', () => {
-  //   let board = createEmptyBoard(3)
-  //   board = setTile(board, { x: 0, y: 2 }, { value: 1 })
-
-  //   // prettier-ignore
-  //   expect(boardToMatrix(board)).toEqual([
-  //     [null, null, null],
-  //     [null, null, null],
-  //     [1   , null, null],
-  //   ])
-
-  //   board = move(board, 'up')
-  //   board = setTile(board, { x: 0, y: 1 }, { value: 1 })
-
-  //   // prettier-ignore
-  //   expect(boardToMatrix(board)).toEqual([
-  //     [1   , 1   , null],
-  //     [null, null, null],
-  //     [null, null, null],
-  //   ])
-  // })
 })
